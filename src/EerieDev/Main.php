@@ -28,6 +28,8 @@ class Main extends PluginBase implements Listener {
         $this->saveResource("cooldown.yml");
     }
 
+    // Fired when an enchanted golden apple is consumed.
+
     public function onConsume(PlayerItemConsumeEvent $event) {
         $player = $event->getPlayer();
         $gapple = $event->getItem();
