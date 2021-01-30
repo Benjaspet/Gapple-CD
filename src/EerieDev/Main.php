@@ -30,7 +30,7 @@ class Main extends PluginBase implements Listener {
     public function onConsume(PlayerItemConsumeEvent $event) {
         $player = $event->getPlayer();
         $gapple = $event->getItem();
-        if ($event->getItem()->getId() == Item::GOLDEN_APPLE) {
+        if ($event->getItem()->getId() == Item::ENCHANTED_GOLDEN_APPLE) {
             if ($player instanceof Player) {
                 if (!isset(Main::$cooldown[$player->getName()])) {
                     Main::$cooldown[$player->getName()] = 1;
@@ -38,7 +38,7 @@ class Main extends PluginBase implements Listener {
                     $this->getScheduler()->scheduleRepeatingTask(new CooldownTask($this, $player, $timer), 20);
                 } else {
                     $event->setCancelled(true);
-                    $addedgapple = Item::get(322, 0, 1);
+                    $addedgapple = Item::get(466, 0, 1);
                     $player->getInventory()->addItem($addedgapple);
                 }
             }
@@ -48,7 +48,7 @@ class Main extends PluginBase implements Listener {
     public function giveGapple(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         if (isset(Main::$cooldown[$player->getName()])) {
-            if ($event->getItem()->getId() == Item::GOLDEN_APPLE) {
+            if ($event->getItem()->getId() == Item::ENCHANTED_GOLDEN_APPLE) {
                 $event->setCancelled(true);
                 $player->sendMessage($this->getConfig()->get("cooldown-message"));
             }
