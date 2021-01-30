@@ -1,0 +1,6 @@
+name: Gapple-CD
+author: EerieDev
+version: 1.0.0
+api: 3.14.0
+main: EerieDev/Main
+description: "a gapple cooldown plugin for PocketMine-MP
