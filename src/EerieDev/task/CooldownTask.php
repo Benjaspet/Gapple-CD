@@ -21,16 +21,17 @@ class CooldownTask extends Task {
     public function onRun(int $currentTick) {
         if ($this->player->isOnline()) {
             $this->timer--;
-            if ($this->timer == 10) {
+            if ($this->timer == 30) {
                 $this->player->setXpLevel($this->timer);
             }
-            if ($this->timer < 10) {
+            if ($this->timer < 30) {
                 $this->player->setXpLevel($this->timer);
             }
-            if ($this->timer == 0) {
+            if ($this->timer <= 0) {
                 $this->player->setXpLevel(0);
                 unset(Main::$cooldown[$this->player->getName()]);
                 $this->plugin->getScheduler()->cancelTask($this->getTaskId());
+                $this->player->sendMessage("§aGapple cooldown ended.");
             }
         }
     }

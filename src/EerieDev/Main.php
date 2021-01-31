@@ -9,6 +9,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\item\GoldenApple;
 use pocketmine\item\Item;
+use pocketmine\level\sound\BlazeShootSound;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use EerieDev\task\CooldownTask;
@@ -20,11 +21,11 @@ class Main extends PluginBase implements Listener {
     public $config;
     public static $cooldown = [];
 
-    public function onEnable() : void {
+    public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getLogger()->info("Gapple-CD by EerieDev enabled.");
+        $this->saveResource("cooldown.yml");
         $this->config = new Config($this->getDataFolder() . "cooldown.yml", Config::YAML);
-        $this->saveDefaultConfig();
     }
 
     public function onConsume(PlayerItemConsumeEvent $event) {
@@ -34,12 +35,8 @@ class Main extends PluginBase implements Listener {
             if ($player instanceof Player) {
                 if (!isset(Main::$cooldown[$player->getName()])) {
                     Main::$cooldown[$player->getName()] = 1;
-                    $timer = $this->getConfig()->get("cooldown-length") + 1;
+                    $timer = 31;
                     $this->getScheduler()->scheduleRepeatingTask(new CooldownTask($this, $player, $timer), 20);
-                } else {
-                    $event->setCancelled(true);
-                    $addedgapple = Item::get(466, 0, 1);
-                    $player->getInventory()->addItem($addedgapple);
                 }
             }
         }
@@ -47,10 +44,11 @@ class Main extends PluginBase implements Listener {
 
     public function giveGapple(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
-        if (isset(Main::$cooldown[$player->getName()])) {
+        if ($player instanceof Player && isset(Main::$cooldown[$player->getName()])) {
             if ($event->getItem()->getId() == Item::ENCHANTED_GOLDEN_APPLE) {
                 $event->setCancelled(true);
-                $player->sendMessage($this->getConfig()->get("cooldown-message"));
+                $player->sendMessage("§cYou are currently in a gapple cooldown.");
+                $player->getLevel()->addSound(new BlazeShootSound($player));
             }
         }
     }
