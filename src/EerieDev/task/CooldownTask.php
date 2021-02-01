@@ -5,6 +5,7 @@ namespace EerieDev\task;
 use EerieDev\Main;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\utils\Config;
 
 class CooldownTask extends Task {
 
@@ -21,17 +22,22 @@ class CooldownTask extends Task {
     public function onRun(int $currentTick) {
         if ($this->player->isOnline()) {
             $this->timer--;
-            if ($this->timer == 30) {
-                $this->player->setXpLevel($this->timer);
+            $yaml = new Config($this->plugin->getDataFolder() . "cooldown.yml", Config::YAML);
+            $int = $yaml->get("cooldown-length");
+            if ($this->timer == $int) {
+                $yaml = new Config($this->plugin->getDataFolder() . "cooldown.yml", Config::YAML);
+                if ((string) $yaml->get("xpbar-enabled") == true) $this->player->setXpLevel($this->timer);
             }
-            if ($this->timer < 30) {
+            if ($this->timer < $int) {
                 $this->player->setXpLevel($this->timer);
             }
             if ($this->timer <= 0) {
                 $this->player->setXpLevel(0);
                 unset(Main::$cooldown[$this->player->getName()]);
                 $this->plugin->getScheduler()->cancelTask($this->getTaskId());
-                $this->player->sendMessage("§aGapple cooldown ended.");
+                $yaml = new Config($this->plugin->getDataFolder() . "cooldown.yml", Config::YAML);
+                $endmsg = (string) $yaml->get("cooldown-end");
+                $this->player->sendMessage($endmsg);
             }
         }
     }
