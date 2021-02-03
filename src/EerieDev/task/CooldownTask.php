@@ -23,7 +23,7 @@ class CooldownTask extends Task {
         if ($this->player->isOnline()) {
             $this->timer--;
             $yaml = new Config($this->plugin->getDataFolder() . "cooldown.yml", Config::YAML);
-            $int = $yaml->get("cooldown-length");
+            $int = (int) $yaml->get("cooldown-length");
             if ($this->timer == $int) {
                 $yaml = new Config($this->plugin->getDataFolder() . "cooldown.yml", Config::YAML);
                 if ((string) $yaml->get("xpbar-enabled") == true) $this->player->setXpLevel($this->timer);
